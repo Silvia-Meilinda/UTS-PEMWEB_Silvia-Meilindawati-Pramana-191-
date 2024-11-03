@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fce7eb;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-container {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            box-sizing: border-box;
+            font-size: 1rem;
+            padding-right: 40px;
+        }
+
+        .password-requirements {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            z-index: 1;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .forgot-password {
+            color: #4285f4;
+            text-decoration: none;
+        }
+
+        .sign-in-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 1rem 0;
+            margin-left: 170px;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider::before {
+            left: -25px;
+            width: 40%;
+        }
+
+        .divider::after {
+            right: -25px;
+            width: 40%;
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Todo Animation Styles remain the same */
+        .todo-animation {
+            width: 300px;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            animation: slideIn 0.5s ease forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4285f4;
+            border-radius: 50%;
+            margin-right: 1rem;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        .todo-line {
+            flex-grow: 1;
+            height: 2px;
+            background: #ddd;
+            position: relative;
+            overflow: hidden;
+                        
+        }
+
+        .todo-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #4285f4;
+            animation: fillLine 3s infinite;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fillLine {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(0); }
+            100% { transform: translateX(100%); }
+        }
+
+        .todo-item:nth-child(1) { animation-delay: 0.2s; }
+        .todo-item:nth-child(2) { animation-delay: 0.4s; }
+        .todo-item:nth-child(3) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="login-container">
+            <h1>Log In</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" required placeholder="Email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" required placeholder="********">
+                        <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+                    </div>
+                    <div class="password-requirements">minimal 8 karakter</div>
+                </div>
+
+                <div class="remember-forgot">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+
+                <a href="Notif + beranda.html" class="sign-in-btn">Log in</a>
+
+                <div class="divider">Or continue with
+
+                </div>
+
+                <button type="button" class="google-btn" onclick="loginWithGoogle()">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzRjYWY1MCIgZD0iTTQ1LDI0YzAsMTEuNy05LjUsMjEtMjEsMjFTMywzNS43LDMsMjRTMTIuMywzLDI0LDNTNDUsMTIuMyw0NSwyNHoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMjQsMTIuMWM0LjcsMCw3LjcsMi4xLDkuNSwzLjlsNC44LTQuOEMzNC45LDcuOCwzMC4xLDUsMjQsNWMtOC40LDAtMTUuNyw1LjItMTguNiwxMi42bDUuNiw0LjRDMTMuMiwxNS45LDE4LjIsMTIuMSwyNCwxMi4xeiIvPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik00Ni42LDI0SDI0djguNWgxMi44YzEuNiw0LjUtNS42LDExLjItMTIuOCwxMS4yYy02LjksMC0xMi41LTUuNi0xMi41LTEyLjVTMTcuMSwxOC44LDI0LDE4LjhjMy4xLDAsNS45LDEuMSw4LjEsMi45bDYuNC02LjRDMzQuNiwxMS41LDI5LjYsOSwyNCw5QzE0LjIsOSw2LDE3LjIsNiwyN3M4LjIsMTgsMTgsMThjMTUsMCwyMC40LTEzLjgsMTguOC0yMUg0Ni42eiIvPjwvc3ZnPg==" alt="Google">
+                    Google
+                </button>
+            </form>
+        </div>
+
+        <div class="todo-animation">
+            <div class="todo-item">
+                <div class="todo-checkbox"></div>
+                <div class="todo-line"></div>
+            </div>
+            <div class="todo-item">
+                <div class="todo-checkbox"></div>
+                <div class="todo-line"></div>
+            </div>
+            <div class="todo-item">
+                <div class="todo-checkbox"></div>
+                <div class="todo-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🔒';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        function loginWithGoogle() {
+            window.location.href = 'https://accounts.google.com';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Validate password length
+            if (password.length < 8) {
+                alert('Password harus minimal 8 karakter!');
+                return;
+            }
+            
+            console.log('Login attempted with:', email);
+        });
+
+        // Add password validation on input
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const requirements = document.querySelector('.password-requirements');
+            
+            if (password.length < 8) {
+                requirements.style.color = '#ff4444';
+            } else {
+                requirements.style.color = '#666';
+            }
+        });
+    </script>
+</body>
+</html>

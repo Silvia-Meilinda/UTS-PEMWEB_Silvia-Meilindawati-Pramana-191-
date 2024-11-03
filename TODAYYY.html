@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .back-button {
+            background: #6B2D5C;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background: #572648;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn-add {
+            background: #6B2D5C;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-add:hover {
+            background: #572648;
+        }
+
+        .task-form {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .task-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .dropzone {
+            border: 2px dashed #ddd;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin: 1rem 0;
+            cursor: pointer;
+        }
+
+        .dropzone.dragover {
+            border-color: #6B2D5C;
+            background: rgba(107, 45, 92, 0.1);
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .file-item {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .file-item img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 8px;
+        }
+
+        .file-item .file-name {
+            font-size: 12px;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .file-item .remove-file {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #6B2D5C;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #ddd;
+            color: #333;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .task-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+                .task-item.completed {
+            background-color: #f8f8f8;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-files {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .task-file {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px;
+            text-align: center;
+        }
+
+        .task-file img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 6px;
+            color: white;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="goBack()">
+            ← Kembali
+        </button>
+
+        <div class="header">
+            <h2>Task Manager</h2>
+            <button class="btn-add" onclick="showTaskForm()">+ Tambah Task</button>
+        </div>
+
+        <form id="taskForm" class="task-form">
+            <div class="form-group">
+                <label for="taskTitle">Judul Task</label>
+                <input type="text" id="taskTitle" required placeholder="Masukkan judul task">
+            </div>
+            
+            <div class="form-group">
+                <label for="taskDescription">Deskripsi</label>
+                <textarea id="taskDescription" placeholder="Masukkan deskripsi task"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="taskDate">Tanggal</label>
+                <input type="text" id="taskDate" placeholder="Pilih tanggal">
+            </div>
+            
+            <div id="dropzone" class="dropzone">
+                Drag & drop file di sini atau klik untuk memilih
+                <input type="file" id="fileInput" multiple style="display: none">
+            </div>
+
+            <div id="filePreview" class="file-preview"></div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary" onclick="hideTaskForm()">Batal</button>
+            </div>
+        </form>
+
+        <div id="taskList" class="task-list">
+            <!-- Tasks will be added here -->
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Initialize date picker
+        flatpickr("#taskDate", {
+            dateFormat: "Y-m-d",
+            minDate: "today"
+        });
+
+        let tasks = [];
+        let currentFiles = [];
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function showTaskForm() {
+            document.getElementById('taskForm').classList.add('active');
+            currentFiles = [];
+            updateFilePreview();
+        }
+
+        function hideTaskForm() {
+            document.getElementById('taskForm').classList.remove('active');
+            document.getElementById('taskForm').reset();
+            currentFiles = [];
+            updateFilePreview();
+        }
+
+        function updateFilePreview() {
+            const preview = document.getElementById('filePreview');
+            preview.innerHTML = '';
+
+            currentFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    fileItem.appendChild(img);
+                } else {
+                    const icon = document.createElement('div');
+                    icon.innerHTML = '📄';
+                    icon.style.fontSize = '2rem';
+                    fileItem.appendChild(icon);
+                }
+
+                const fileName = document.createElement('div');
+                fileName.className = 'file-name';
+                fileName.textContent = file.name;
+                fileItem.appendChild(fileName);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-file';
+                removeBtn.innerHTML = '×';
+                removeBtn.onclick = () => removeFile(index);
+                fileItem.appendChild(removeBtn);
+
+                preview.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            currentFiles.splice(index, 1);
+            updateFilePreview();
+        }
+
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDescription').value;
+            const date = document.getElementById('taskDate').value;
+
+            if (!title) {
+                showNotification('Judul task harus diisi!', 'error');
+                return;
+            }
+
+            const task = {
+                id: Date.now(),
+                title,
+                description,
+                date,
+                completed: false,
+                files: currentFiles
+            };
+
+            tasks.push(task);
+            renderTasks();
+            hideTaskForm();
+            showNotification('Task berhasil ditambahkan!', 'success');
+        });
+
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+
+            tasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
+                
+                let filesHTML = '';
+                if (task.files && task.files.length > 0) {
+                    filesHTML = `
+                        <div class="task-files">
+                            ${Array.from(task.files).map(file => {
+                                if (file.type.startsWith('image/')) {
+                                    return `
+                                        <div class="task-file">
+                                            <img src="${URL.createObjectURL(file)}" alt="${file.name}">
+                                            <div class="file-name">${file.name}</div>
+                                        </div>
+                                    `;
+                                } else {
+                                    return `
+                                        <div class="task-file">
+                                            <div style="font-size: 2rem;">📄</div>
+                                            <div class="file-name">${file.name}</div>
+                                        </div>
+                                    `;
+                                }
+                            }).join('')}
+                        </div>
+                    `;
+                }
+
+                taskElement.innerHTML = `
+                    <div class="task-header">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                               onchange="toggleTask(${task.id})">
+                        <div class="task-content">
+                            <h4>${task.title}</h4>
+                            <p>${task.description}</p>
+                            <small>📅 ${task.date || 'Tidak ada tanggal'}</small>
+                        </div>
+                        <button onclick="deleteTask(${task.id})" class="btn btn-secondary">
+                            🗑️
+                        </button>
+                    </div>
+                    ${filesHTML}
+                `;
+
+                taskList.appendChild(taskElement);
+            });
+        }
+
+        function toggleTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                renderTasks();
+            }
+        }
+
+        function deleteTask(taskId) {
+            tasks = tasks.filter(t => t.id !== taskId);
+            renderTasks();
+            showNotification('Task berhasil dihapus!', 'success');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            notification.style.backgroundColor = type === 'success' ? '#4CAF50' : '#f44336';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            currentFiles = [...currentFiles, ...files];
+            updateFilePreview();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            currentFiles = [...currentFiles, ...files];
+            updateFilePreview();
+        });
+        function goBack() {
+            window.history.back();
+        }
+
+    </script>
+</body>
+</html>
